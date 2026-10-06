@@ -11,6 +11,7 @@ This script will:
 Designed to run in the project's venv.
 """
 
+import argparse
 import os
 import re
 import hashlib
@@ -108,6 +109,11 @@ def clean_and_filter_texts(texts, min_words=50):
 def tokenize_and_chunk(texts, model_name="gpt2", block_size=512):
     from transformers import AutoTokenizer
 
+    if not texts:
+        raise ValueError("No documents remain after cleaning; provide more input text or lower --min-words.")
+    if block_size < 2:
+        raise ValueError("block_size must be at least 2")
+
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -158,19 +164,25 @@ def small_dataloader_smoke_test(tokenized, batch_size=8):
 
 
 def main():
-    # NOTE: using whatever raw .txt files are present in sample_text_dataset (no download)
-    # 1) (skip download) Load raw texts from existing folder
-    # download_200mb_subset()  # disabled: processing local dataset only per user request
-    texts = load_texts_from_folder()
+    parser = argparse.ArgumentParser(description="Clean and tokenize local .txt files for language-model coursework.")
+    parser.add_argument("--input-dir", type=Path, default=RAW_DATA_FOLDER)
+    parser.add_argument("--output", type=Path, default=PROCESSED_DATA_FOLDER / "tokenized_200mb.pt")
+    parser.add_argument("--min-words", type=int, default=50)
+    parser.add_argument("--block-size", type=int, default=512)
+    args = parser.parse_args()
+
+    if not args.input_dir.is_dir() or not any(args.input_dir.glob("*.txt")):
+        parser.error(f"No .txt files found in {args.input_dir}. Add licensed/local text files or pass --input-dir.")
+    texts = load_texts_from_folder(args.input_dir)
 
     # 3) Clean, dedupe, filter
-    cleaned = clean_and_filter_texts(texts)
+    cleaned = clean_and_filter_texts(texts, min_words=args.min_words)
 
     # 4) Tokenize and chunk
-    tokenized = tokenize_and_chunk(cleaned, model_name="gpt2", block_size=512)
+    tokenized = tokenize_and_chunk(cleaned, model_name="gpt2", block_size=args.block_size)
 
     # 5) Save tokenized blocks
-    save_tokenized_blocks(tokenized)
+    save_tokenized_blocks(tokenized, args.output)
 
     # 6) Smoke test DataLoader
     small_dataloader_smoke_test(tokenized)

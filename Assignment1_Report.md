@@ -1,5 +1,7 @@
 Assignment 1 — Data Collection & Preprocessing for Foundation Model Pre-Training
 
+> Portfolio note (2026-10-06): This is the original coursework narrative. Its ~200 MB corpus, generated artifact, and several `Assign 1/` paths are **not present in this GitHub checkout**, so the historical size/result claims are not independently reproducible here. Use the current README and CLI for a fresh run with your own licensed text; do not treat this report as a verified benchmark.
+
 1. Dataset sources and size
 
 - Source: existing `sample_text_dataset` folder that comes with the repo (mixed domain samples: books, news, openwebtext, stackexchange, wikipedia).
