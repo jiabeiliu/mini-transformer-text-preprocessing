@@ -1,6 +1,6 @@
 # Text preprocessing for a small Transformer (coursework, Part 1)
 
-This repository contains the data-preparation half of a two-part learning project. It cleans local text, removes exact duplicate documents, tokenizes with the GPT-2 tokenizer, and writes fixed-length token blocks. The companion [small Transformer training notebook](https://github.com/jiabeiliu/Assignment-2) is Part 2.
+This repository contains the data-preparation half of a two-part learning project. It cleans local text, removes exact duplicate documents, tokenizes with the GPT-2 tokenizer, and writes fixed-length token blocks. The companion [small Transformer training notebook](https://github.com/jiabeiliu/mini-gpt-training-experiment) is Part 2.
 
 ## What runs today
 
